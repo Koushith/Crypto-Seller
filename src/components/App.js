@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import Web3 from 'web3';
 import './App.css';
 import Navbar from './Navbar';
+// compiled byte code
+
+import Token from '../abis/Token.json';
+import EthSwap from '../abis/EthSwap.json';
 
 class App extends Component {
   async componentWillMount() {
@@ -31,6 +35,20 @@ class App extends Component {
     // get balance
     const ethBalance = await web3.eth.getBalance(this.state.account);
     this.setState({ ethBalance });
+
+    // Load Token ----from compiled network
+    const networkId = await web3.eth.net.getId();
+    const tokenData = Token.networks[networkId];
+    if (tokenData) {
+      const token = new web3.eth.Contract(Token.abi, tokenData.address);
+      this.setState({ token });
+      let tokenBalance = await token.methods
+        .balanceOf(this.state.account)
+        .call();
+      this.setState({ tokenBalance: tokenBalance.toString() });
+    } else {
+      window.alert('Token contract not deployed to detected network.');
+    }
   }
 
   // state
