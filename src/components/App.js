@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Web3 from 'web3';
 import './App.css';
 import Navbar from './Navbar';
+import Main from './Main';
 // compiled byte code
 
 import Token from '../abis/Token.json';
@@ -36,7 +37,8 @@ class App extends Component {
     const ethBalance = await web3.eth.getBalance(this.state.account);
     this.setState({ ethBalance });
 
-    // Load Token ----from compiled network
+    // Load Token ----from compiled files inside abi folder
+    // Load Token
     const networkId = await web3.eth.net.getId();
     const tokenData = Token.networks[networkId];
     if (tokenData) {
@@ -49,14 +51,27 @@ class App extends Component {
     } else {
       window.alert('Token contract not deployed to detected network.');
     }
-  }
 
+    // Load EthSwap
+    const ethSwapData = EthSwap.networks[networkId];
+    if (ethSwapData) {
+      const ethSwap = new web3.eth.Contract(EthSwap.abi, ethSwapData.address);
+      this.setState({ ethSwap });
+      console.log('ETH', ethSwap);
+    } else {
+      window.alert('EthSwap contract not deployed to detected network.');
+    }
+  }
   // state
   constructor() {
     super();
     this.state = {
       account: '',
-      ethBalance: '',
+      token: {},
+      ethSwap: {},
+      ethBalance: '0',
+      tokenBalance: '0',
+      loading: true,
     };
   }
 
@@ -65,13 +80,7 @@ class App extends Component {
       <div>
         <Navbar account={this.state.account} />
 
-        <div className='container-fluid mt-5'>
-          <div className='row'>
-            <main role='main' className='col-lg-12 d-flex text-center'>
-              <div className='content mr-auto ml-auto'>Hello World</div>
-            </main>
-          </div>
-        </div>
+        <Main />
       </div>
     );
   }
