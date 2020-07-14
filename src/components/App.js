@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
 import './App.css';
+import Navbar from './Navbar';
 
 class App extends Component {
   async componentWillMount() {
@@ -25,8 +26,11 @@ class App extends Component {
     // from web3.js docs
     const accounts = await web3.eth.getAccounts();
 
-    console.log(accounts);
     this.setState({ account: accounts[0] });
+
+    // get balance
+    const ethBalance = await web3.eth.getBalance(this.state.account);
+    this.setState({ ethBalance });
   }
 
   // state
@@ -34,22 +38,15 @@ class App extends Component {
     super();
     this.state = {
       account: '',
+      ethBalance: '',
     };
   }
 
   render() {
     return (
       <div>
-        <nav className='navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow'>
-          <a
-            className='navbar-brand col-sm-3 col-md-2 mr-0'
-            href='http://www.dappuniversity.com/bootcamp'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            Crypto Trade
-          </a>
-        </nav>
+        <Navbar account={this.state.account} />
+
         <div className='container-fluid mt-5'>
           <div className='row'>
             <main role='main' className='col-lg-12 d-flex text-center'>
