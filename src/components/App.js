@@ -61,6 +61,9 @@ class App extends Component {
     } else {
       window.alert('EthSwap contract not deployed to detected network.');
     }
+    // stop the loading
+    this.setState({ loading: false });
+    console.log(this.state.ethSwap);
   }
   // state
   constructor() {
@@ -76,11 +79,46 @@ class App extends Component {
   }
 
   render() {
+    let content;
+    if (this.state.loading) {
+      content = (
+        <p id='loader' className='text-center'>
+          Loading...
+        </p>
+      );
+    } else {
+      content = (
+        <Main
+          ethBalance={this.state.ethBalance}
+          tokenBalance={this.state.tokenBalance}
+          buyTokens={this.buyTokens}
+          sellTokens={this.sellTokens}
+        />
+      );
+    }
+
     return (
       <div>
         <Navbar account={this.state.account} />
+        <div className='container-fluid mt-5'>
+          <div className='row'>
+            <main
+              role='main'
+              className='col-lg-12 ml-auto mr-auto'
+              style={{ maxWidth: '600px' }}
+            >
+              <div className='content mr-auto ml-auto'>
+                <a
+                  href='http://www.dappuniversity.com/bootcamp'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                ></a>
 
-        <Main />
+                {content}
+              </div>
+            </main>
+          </div>
+        </div>
       </div>
     );
   }
